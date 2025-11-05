@@ -1,7 +1,7 @@
 PYTHON ?= python3
 PIP ?= pip3
 
-.PHONY: install lint type-check test api-test e2e docs-build docs-serve docs-live ci docker-build pre-commit-install
+.PHONY: install lint type-check test api-test e2e docs-build docs-serve docs-live ci docker-build pre-commit-install run-api simulate
 
 install:
 	$(PIP) install -r requirements-dev.txt
@@ -23,6 +23,12 @@ api-test:
 
 e2e:
 	@echo "Playwright smoke placeholder — add scripted scenarios in Phase 5."
+
+run-api:
+	uvicorn aware.backend.app:app --reload --host 0.0.0.0 --port 8001
+
+simulate:
+	$(PYTHON) -m aware.sim --duration 600 --cadence 2
 
 docs-build:
 	mkdocs build -s

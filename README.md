@@ -29,7 +29,7 @@ aware/
 
 Supporting assets sit at the repository root (CI/CD, configuration, documentation scaffolding).
 
-## Getting Started (Phase 0)
+## Getting Started (Phase 1)
 1. Install prerequisites: Docker, Docker Compose, Python 3.11+, Node 18+, and `make`.
 2. Clone the repository and install pre-commit hooks:
    ```bash
@@ -38,14 +38,25 @@ Supporting assets sit at the repository root (CI/CD, configuration, documentatio
    pip install pre-commit
    pre-commit install
    ```
-3. Build the documentation locally:
+3. Launch the telemetry stack locally:
+   ```bash
+   docker compose up db api -d
+   make simulate  # emits events + optional replay CSV
+   ```
+4. Explore the ingestion API (FastAPI docs available at http://localhost:8001/docs).
+5. Build the documentation locally:
    ```bash
    make docs-serve
    ```
-4. Run the baseline checks:
+6. Run the baseline checks:
    ```bash
    make ci
    ```
+
+### Useful Commands
+- `make run-api` — start the FastAPI ingestion service locally.
+- `make simulate` — run the digital twin simulator and export a replay CSV.
+- `make docs-serve` — preview MkDocs documentation.
 
 Comprehensive quick-start instructions for the digital twin, leak detection pipeline, and UI will arrive in later phases.
 

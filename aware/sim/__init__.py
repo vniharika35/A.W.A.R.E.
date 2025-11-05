@@ -1,3 +1,16 @@
-"""Placeholder module for A.W.A.R.E. ${pkg} package."""
+"""Simulation package exposing digital twin helpers."""
 
-__all__: list[str] = []
+from __future__ import annotations
+
+from .config import SimulationConfig
+from .replay import TelemetryReplay
+from .simulator import DigitalTwinSimulator
+from .telemetry import TelemetryEvent
+
+
+__all__ = [
+    "SimulationConfig",
+    "TelemetryReplay",
+    "DigitalTwinSimulator",
+    "TelemetryEvent",
+]
