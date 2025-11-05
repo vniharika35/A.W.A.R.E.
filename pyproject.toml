@@ -1,0 +1,37 @@
+[build-system]
+requires = ["setuptools", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "aware"
+version = "0.0.0"
+description = "A.W.A.R.E. — Agent for Water Autonomy, Resilience, and Efficiency"
+authors = [
+  { name = "Team A.W.A.R.E" }
+]
+requires-python = ">=3.11"
+readme = "README.md"
+license = { text = "MIT" }
+
+[tool.mypy]
+python_version = "3.11"
+packages = ["aware"]
+warn_unused_configs = true
+ignore_missing_imports = true
+
+[tool.ruff]
+line-length = 100
+target-version = "py311"
+fix = true
+show-fixes = true
+src = ["aware"]
+select = ["E", "F", "B", "I"]
+
+[tool.ruff.lint.isort]
+force-single-line = true
+lines-after-imports = 2
+
+[tool.pytest.ini_options]
+minversion = "8.0"
+addopts = "-ra --color=yes"
+testpaths = ["aware/tests"]

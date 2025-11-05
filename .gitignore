@@ -1,0 +1,40 @@
+# Python
+__pycache__/
+*.py[cod]
+*.coverage
+.pytest_cache/
+.mypy_cache/
+ruff_cache/
+
+# Node
+node_modules/
+dist/
+.next/
+
+# Environments
+.env
+.env.*
+.venv/
+venv/
+
+# Editors
+.idea/
+.vscode/
+.DS_Store
+
+# Build artifacts
+build/
+coverage/
+htmlcov/
+pytest.xml
+junit.xml
+
+# MkDocs
+site/
+
+# Docker
+*.log
+
+# Misc
+*.swp
+*.swo
