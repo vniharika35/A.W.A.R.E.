@@ -23,8 +23,8 @@ cost per MGal reduction ≥ 15% (synthetic proxy during MVP).
 ## Phase Roadmap
 1. **Phase 0 — Kickoff:** Align on scope, personas, and success metrics; bootstrap
    the repo, CI, and documentation.
-2. **Phase 1 — Digital Twin & Telemetry:** Stand up EPANET-driven simulations and
-   telemetry ingestion.
+2. **Phase 1 — Digital Twin & Telemetry:** Stand up EPANET-driven simulations,
+   tariff alignment, and telemetry ingestion APIs.
 3. **Phase 2 — Leak Detection:** Deliver calibrated leak detection with
    explainability.
 4. **Phase 3 — Isolation Sequencing & Actuation:** Plan and audit valve operations
