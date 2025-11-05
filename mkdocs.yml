@@ -1,0 +1,25 @@
+site_name: A.W.A.R.E.
+site_url: https://vniharika35.github.io/A.W.A.R.E.
+repo_url: https://github.com/vniharika35/A.W.A.R.E.
+repo_name: vniharika35/A.W.A.R.E.
+copyright: "© 2024 Team A.W.A.R.E"
+theme:
+  name: material
+  palette:
+    - scheme: default
+      primary: "blue"
+      accent: "cyan"
+markdown_extensions:
+  - admonition
+  - pymdownx.details
+  - pymdownx.highlight
+  - toc:
+      permalink: true
+nav:
+  - Overview: index.md
+  - Phase Reports:
+      - "Phase 00 — Kickoff": phase-00.md
+  - Architecture:
+      - "ADR-001 — Scope & Success Metrics": adr/ADR-001-scope-and-success-metrics.md
+      - "User Journeys": journeys/alex-maya-jordan.md
+      - "Risk Log": risk-log.md
