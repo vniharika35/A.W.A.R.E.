@@ -47,8 +47,9 @@ def build_demo_network(config: SimulationConfig) -> wntr.network.WaterNetworkMod
         min_level=1.0,
         max_level=7.0,
         diameter=15.0,
-        min_volume=0.0,
     )
+    tank = wn.get_tank("TANK1")
+    tank.min_volume = 0.0
 
     wn.add_junction("J1", base_demand=0.010, elevation=185.0, demand_pattern=pattern_name)
     wn.add_junction("J2", base_demand=0.015, elevation=183.0, demand_pattern=pattern_name)
