@@ -41,3 +41,25 @@ class TelemetryRecord(Base):
             "source": self.source,
             "quality": self.quality,
         }
+
+
+class IsolationAction(Base):
+    __tablename__ = "isolation_actions"
+
+    id: Mapped[int] = mapped_column(Integer, primary_key=True, autoincrement=True)
+    leak_pipe_id: Mapped[str] = mapped_column(String(32), index=True, nullable=False)
+    valve_id: Mapped[str] = mapped_column(String(32), nullable=False)
+    action: Mapped[str] = mapped_column(String(16), nullable=False)
+    status: Mapped[str] = mapped_column(String(16), nullable=False)
+    timestamp: Mapped[datetime] = mapped_column(DateTime(timezone=True), nullable=False)
+    performed_by: Mapped[str] = mapped_column(String(64), default="system")
+
+    def as_dict(self) -> dict[str, object]:
+        return {
+            "leak_pipe_id": self.leak_pipe_id,
+            "valve_id": self.valve_id,
+            "action": self.action,
+            "status": self.status,
+            "timestamp": self.timestamp.isoformat(),
+            "performed_by": self.performed_by,
+        }

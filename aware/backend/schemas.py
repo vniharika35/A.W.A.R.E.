@@ -12,6 +12,35 @@ from pydantic import Field
 from pydantic import field_validator
 
 
+class IsolationPlanRequest(BaseModel):
+    leak_pipe_id: str = Field(..., examples=["P_J1_J2"])
+    start_node: str = Field(..., examples=["J1"])
+    end_node: str = Field(..., examples=["J2"])
+
+
+class IsolationStep(BaseModel):
+    order: int
+    valve_id: str
+    customers_affected: int
+    loss_rate_lps: float
+
+
+class IsolationPlanResponse(BaseModel):
+    leak_pipe_id: str
+    approval_required: bool
+    steps: List[IsolationStep]
+
+
+class IsolationExecuteRequest(BaseModel):
+    leak_pipe_id: str
+    valve_ids: List[str]
+    approved_by: str | None = None
+
+
+class IsolationActionResponse(BaseModel):
+    actions: List[dict[str, object]]
+
+
 class TelemetryEventIn(BaseModel):
     timestamp: datetime
     entity_type: str = Field(..., examples=["junction", "pipe", "tank", "tariff"])
