@@ -28,7 +28,7 @@ cost per MGal reduction ≥ 15% (synthetic proxy during MVP).
 3. **Phase 2 — Leak Detection:** Deliver calibrated, rule-based leak detection with
    multi-sensor fusion and explainability.
 4. **Phase 3 — Isolation Sequencing & Actuation:** Plan and audit valve operations
-   with safe rollbacks.
+   with human-in-loop approval and safe rollbacks.
 5. **Phase 4 — Energy Optimization:** Forecast demand and schedule pumps against
    tariffs.
 6. **Phase 5 — Operator UX:** Provide real-time visualization, explainability, and
