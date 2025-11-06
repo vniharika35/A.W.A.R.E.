@@ -20,6 +20,7 @@ nav:
   - Phase Reports:
       - "Phase 00 — Kickoff": phase-00.md
       - "Phase 01 — Digital Twin": phase-01.md
+      - "Phase 02 — Leak Detection": phase-02.md
   - Architecture:
       - "ADR-001 — Scope & Success Metrics": adr/ADR-001-scope-and-success-metrics.md
       - "User Journeys": journeys/alex-maya-jordan.md
