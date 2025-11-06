@@ -25,8 +25,8 @@ cost per MGal reduction ≥ 15% (synthetic proxy during MVP).
    the repo, CI, and documentation.
 2. **Phase 1 — Digital Twin & Telemetry:** Stand up EPANET-driven simulations,
    tariff alignment, and telemetry ingestion APIs.
-3. **Phase 2 — Leak Detection:** Deliver calibrated leak detection with
-   explainability.
+3. **Phase 2 — Leak Detection:** Deliver calibrated, rule-based leak detection with
+   multi-sensor fusion and explainability.
 4. **Phase 3 — Isolation Sequencing & Actuation:** Plan and audit valve operations
    with safe rollbacks.
 5. **Phase 4 — Energy Optimization:** Forecast demand and schedule pumps against

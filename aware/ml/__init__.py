@@ -1,3 +1,10 @@
-"""Placeholder module for A.W.A.R.E. ${pkg} package."""
+"""Machine learning utilities for leak detection and forecasting."""
 
-__all__: list[str] = []
+from __future__ import annotations
+
+from aware.ml.detectors import LeakDetectionResult
+from aware.ml.detectors import LeakDetector
+from aware.ml.detectors import LeakDetectorConfig
+
+
+__all__ = ["LeakDetector", "LeakDetectorConfig", "LeakDetectionResult"]

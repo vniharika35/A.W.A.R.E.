@@ -1,0 +1,13 @@
+timestamp,entity_type,entity_id,metric,value,unit,source,quality
+2025-01-01T00:00:00+00:00,junction,J1,pressure_kpa,205.0,kPa,simulator,1.0
+2025-01-01T00:00:00+00:00,pipe,P_J1_J2,flow_lps,8.0,L/s,simulator,1.0
+2025-01-01T00:00:00+00:00,junction,J1,demand_lps,3.0,L/s,simulator,1.0
+2025-01-01T00:01:00+00:00,junction,J1,pressure_kpa,202.0,kPa,simulator,1.0
+2025-01-01T00:01:00+00:00,pipe,P_J1_J2,flow_lps,9.0,L/s,simulator,1.0
+2025-01-01T00:01:00+00:00,junction,J1,demand_lps,3.5,L/s,simulator,1.0
+2025-01-01T00:02:00+00:00,junction,J1,pressure_kpa,198.0,kPa,simulator,1.0
+2025-01-01T00:02:00+00:00,pipe,P_J1_J2,flow_lps,12.0,L/s,simulator,1.0
+2025-01-01T00:02:00+00:00,junction,J1,demand_lps,5.5,L/s,simulator,1.0
+2025-01-01T00:03:00+00:00,junction,J1,pressure_kpa,197.5,kPa,simulator,1.0
+2025-01-01T00:03:00+00:00,pipe,P_J1_J2,flow_lps,12.5,L/s,simulator,1.0
+2025-01-01T00:03:00+00:00,junction,J1,demand_lps,5.7,L/s,simulator,1.0

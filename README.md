@@ -56,6 +56,7 @@ Supporting assets sit at the repository root (CI/CD, configuration, documentatio
 ### Useful Commands
 - `make run-api` — start the FastAPI ingestion service locally.
 - `make simulate` — run the digital twin simulator and export a replay CSV.
+- `make leak-detect` — run the rule-based leak detector against a telemetry CSV (override `TELEMETRY=...` for custom data).
 - `make docs-serve` — preview MkDocs documentation.
 
 Comprehensive quick-start instructions for the digital twin, leak detection pipeline, and UI will arrive in later phases.

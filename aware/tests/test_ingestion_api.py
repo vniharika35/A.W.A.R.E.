@@ -30,6 +30,23 @@ def _generate_events(count: int) -> list[dict[str, object]]:
     return payload
 
 
+def _apply_leak(payload: list[dict[str, object]], start_idx: int) -> None:
+    for idx, event in enumerate(payload):
+        if idx < start_idx:
+            continue
+        raw_value = event.get("value")
+        if isinstance(raw_value, str):
+            value = float(raw_value)
+        elif isinstance(raw_value, (int, float)):
+            value = float(raw_value)
+        else:
+            continue
+        if event["metric"] == "pressure_kpa":
+            event["value"] = value - 3.0
+        elif event["metric"] in {"flow_lps", "demand_lps"}:
+            event["value"] = value + 2.5
+
+
 def test_ingest_and_query_stats(client: TestClient) -> None:
     payload = {"events": _generate_events(120)}
     response = client.post("/telemetry", json=payload)
@@ -64,3 +81,21 @@ def test_bulk_ingest_10k_events(client: TestClient) -> None:
     response = client.post("/telemetry", json={"events": repeated})
     assert response.status_code == 200
     assert response.json()["inserted"] == len(repeated)
+
+
+def test_leak_analysis_endpoint(client: TestClient) -> None:
+    payload = _generate_events(180)
+    start_idx = max(0, len(payload) - 120)
+    _apply_leak(payload, start_idx=start_idx)
+    response = client.post("/telemetry", json={"events": payload})
+    assert response.status_code == 200
+
+    analysis = client.get("/leaks/analyze", params={"window": 540})
+    assert analysis.status_code == 200
+    body = analysis.json()
+    assert body["status"] == "ok"
+    latest = body["latest"]
+    assert latest["probability"] > 0.5
+    assert latest["triggered"] is True
+    reason_metrics = {reason["metric"] for reason in latest["reasons"]}
+    assert "pressure" in reason_metrics
