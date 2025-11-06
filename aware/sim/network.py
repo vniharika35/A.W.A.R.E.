@@ -48,8 +48,7 @@ def build_demo_network(config: SimulationConfig) -> wntr.network.WaterNetworkMod
         max_level=7.0,
         diameter=15.0,
     )
-    tank = wn.get_tank("TANK1")
-    tank.min_volume = 0.0
+    wn.get_node("TANK1").min_volume = 0.0
 
     wn.add_junction("J1", base_demand=0.010, elevation=185.0, demand_pattern=pattern_name)
     wn.add_junction("J2", base_demand=0.015, elevation=183.0, demand_pattern=pattern_name)
@@ -69,13 +68,7 @@ def build_demo_network(config: SimulationConfig) -> wntr.network.WaterNetworkMod
         pump_parameter=60.0,
     )
 
-    wn.get_link("P_RES_J1").status = wntr.network.LinkStatus.Open
-    wn.get_link("P_J1_J2").status = wntr.network.LinkStatus.Open
-    wn.get_link("P_J2_J3").status = wntr.network.LinkStatus.Open
-    wn.get_link("P_J3_J1").status = wntr.network.LinkStatus.Open
-
     wn.add_pipe("P_T1_J2", "TANK1", "J2", length=750.0, diameter=0.30, roughness=115.0)
-    wn.get_link("P_T1_J2").status = wntr.network.LinkStatus.Open
 
     return wn
 

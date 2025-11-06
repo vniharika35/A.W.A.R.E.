@@ -31,7 +31,7 @@ def load_tariff_curve(path: Path, config: SimulationConfig) -> pd.Series:
     desired_index = pd.timedelta_range(
         start=0,
         periods=config.steps() + 1,
-        freq=f"{config.cadence_seconds}S",
+        freq=f"{config.cadence_seconds}s",
     )
     aligned = series.reindex(desired_index, method="ffill")
     aligned.index.name = "offset"
