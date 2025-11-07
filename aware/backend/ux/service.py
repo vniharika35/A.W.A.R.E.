@@ -231,8 +231,11 @@ class DashboardService:
             minimum_support=min(120, len(events)),
         )
         detector = LeakDetector(config)
-        detector.fit_baseline(events)
-        results = detector.detect(events)
+        try:
+            detector.fit_baseline(events)
+            results = detector.detect(events)
+        except (ValueError, IndexError):
+            return None
         latest = results[-1]
         snapshot = leak_result_to_dict(latest)
         return snapshot
