@@ -92,7 +92,7 @@ class PumpScheduler:
         guardrail_breaches = 0
 
         for point in forecast:
-            start_ts = pd.Timestamp(point.timestamp, tz="UTC").floor("H")
+            start_ts = self._hour_floor(point.timestamp)
             end_ts = start_ts + pd.Timedelta(hours=1)
             if start_ts in tariff.index:
                 hour_price = float(tariff.loc[start_ts])
@@ -201,3 +201,11 @@ class PumpScheduler:
         if demand_signal <= 0.1 and price > low_price_threshold:
             return "coast-on-storage"
         return "balanced-response"
+
+    def _hour_floor(self, timestamp: datetime) -> pd.Timestamp:
+        ts = pd.Timestamp(timestamp)
+        if ts.tzinfo is None:
+            ts = ts.tz_localize("UTC")
+        else:
+            ts = ts.tz_convert("UTC")
+        return ts.floor("H")
