@@ -59,6 +59,20 @@ Supporting assets sit at the repository root (CI/CD, configuration, documentatio
 - `make leak-detect` — run the rule-based leak detector against a telemetry CSV (override `TELEMETRY=...` for custom data).
 - `make docs-serve` — preview MkDocs documentation.
 
+### Energy Optimization Quick Start (Phase 04)
+1. Ensure telemetry exists (run `make simulate` or POST historical data to `/telemetry`).
+2. Request a demand outlook:
+   ```bash
+   curl "http://localhost:8001/energy/forecast?horizon_hours=24" | jq '.points[0:3]'
+   ```
+3. Generate a pump plan aligned with tariffs and guardrails:
+   ```bash
+   curl -X POST http://localhost:8001/energy/optimize \\
+     -H 'Content-Type: application/json' \\
+     -d '{"horizon_hours":24,"pump_ids":["pump_a","pump_b"],"max_parallel_pumps":2,"pressure_floor_kpa":240}'
+   ```
+4. Review `expected_savings_pct`, `pressure_guard_breaches`, and per-hour `steps` before Alex approves execution downstream.
+
 Comprehensive quick-start instructions for the digital twin, leak detection pipeline, and UI will arrive in later phases.
 
 ## Governance & Process

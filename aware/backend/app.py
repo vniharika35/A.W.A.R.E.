@@ -12,6 +12,7 @@ from fastapi import FastAPI
 from fastapi import HTTPException
 from sqlalchemy.orm import Session
 
+from aware.backend.energy import EnergyService
 from aware.backend.isolation import IsolationPlanner
 from aware.backend.isolation import IsolationPlannerConfig
 from aware.backend.isolation import IsolationPolicy
@@ -27,11 +28,16 @@ from .db import get_engine
 from .db import get_session
 from .models import IsolationAction
 from .models import TelemetryRecord
+from .schemas import DemandForecastPoint
+from .schemas import DemandForecastResponse
+from .schemas import EnergyOptimizationRequest
+from .schemas import EnergyOptimizationResponse
 from .schemas import IsolationActionResponse
 from .schemas import IsolationExecuteRequest
 from .schemas import IsolationPlanRequest
 from .schemas import IsolationPlanResponse
 from .schemas import IsolationStep
+from .schemas import PumpScheduleStepOut
 from .schemas import TelemetryIngestRequest
 from .schemas import TelemetryIngestResponse
 from .schemas import TelemetryStats
@@ -114,6 +120,79 @@ def analyze_leaks(
         "latest": _result_to_dict(latest),
         "alerts": [_result_to_dict(result) for result in results[-15:]],
     }
+
+
+@app.get("/energy/forecast", response_model=DemandForecastResponse, tags=["energy"])
+def energy_forecast(
+    horizon_hours: int = 24,
+    session: Session = Depends(get_session),
+) -> DemandForecastResponse:
+    if not 1 <= horizon_hours <= 168:
+        raise HTTPException(status_code=400, detail="horizon_hours must be between 1 and 168")
+    service = EnergyService(session)
+    points = service.demand_forecast(horizon_hours=horizon_hours)
+    issued_at = datetime.now(timezone.utc)
+    return DemandForecastResponse(
+        issued_at=issued_at,
+        horizon_hours=horizon_hours,
+        points=[
+            DemandForecastPoint(
+                timestamp=point.timestamp,
+                demand_lps=round(point.demand_lps, 3),
+                confidence=point.confidence,
+            )
+            for point in points
+        ],
+    )
+
+
+@app.post("/energy/optimize", response_model=EnergyOptimizationResponse, tags=["energy"])
+def energy_optimize(
+    payload: EnergyOptimizationRequest,
+    session: Session = Depends(get_session),
+) -> EnergyOptimizationResponse:
+    service = EnergyService(session)
+    report = service.optimize_energy(
+        horizon_hours=payload.horizon_hours,
+        pump_ids=payload.pump_ids,
+        max_parallel_pumps=payload.max_parallel_pumps,
+        pressure_floor_kpa=payload.pressure_floor_kpa,
+        energy_per_pump_mwh=payload.energy_per_pump_mwh,
+    )
+    steps = [
+        PumpScheduleStepOut(
+            start=step.start,
+            end=step.end,
+            pump_ids=list(step.pump_ids),
+            pumps_on=step.pumps_on,
+            expected_cost_usd=step.expected_cost_usd,
+            expected_pressure_kpa=step.expected_pressure_kpa,
+            price_signal=step.price_signal,
+            demand_signal=step.demand_signal,
+            reason=step.reason,
+        )
+        for step in report.schedule.steps
+    ]
+    forecast_points = [
+        DemandForecastPoint(
+            timestamp=point.timestamp,
+            demand_lps=round(point.demand_lps, 3),
+            confidence=point.confidence,
+        )
+        for point in report.forecast
+    ]
+    return EnergyOptimizationResponse(
+        issued_at=report.issued_at,
+        horizon_hours=report.horizon_hours,
+        baseline_cost_usd=report.schedule.baseline_cost_usd,
+        optimized_cost_usd=report.schedule.optimized_cost_usd,
+        expected_savings_pct=report.expected_savings_pct,
+        roi_confidence=report.roi_confidence,
+        pressure_guard_breaches=report.pressure_guard_breaches,
+        time_to_first_action_minutes=report.time_to_first_action_minutes,
+        steps=steps,
+        forecast=forecast_points,
+    )
 
 
 def _records_to_events(records: Iterable[TelemetryRecord]) -> list[TelemetryEvent]:
