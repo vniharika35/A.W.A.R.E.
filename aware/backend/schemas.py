@@ -78,3 +78,50 @@ class TelemetryIngestResponse(BaseModel):
 class TelemetryStats(BaseModel):
     metric: str
     count: int
+
+
+class DemandForecastPoint(BaseModel):
+    timestamp: datetime
+    demand_lps: float
+    confidence: float
+
+
+class DemandForecastResponse(BaseModel):
+    issued_at: datetime
+    horizon_hours: int
+    points: List[DemandForecastPoint]
+
+
+class PumpScheduleStepOut(BaseModel):
+    start: datetime
+    end: datetime
+    pump_ids: List[str]
+    pumps_on: int
+    expected_cost_usd: float
+    expected_pressure_kpa: float
+    price_signal: float
+    demand_signal: float
+    reason: str
+
+
+class EnergyOptimizationRequest(BaseModel):
+    horizon_hours: int = Field(24, ge=1, le=168)
+    pump_ids: List[str] = Field(default_factory=lambda: ["pump_a", "pump_b"])
+    max_parallel_pumps: int = Field(2, ge=1, le=4)
+    pressure_floor_kpa: float = Field(240.0, ge=150.0, le=400.0)
+    energy_per_pump_mwh: float = Field(0.85, gt=0.0, le=5.0)
+
+    model_config = ConfigDict(extra="forbid")
+
+
+class EnergyOptimizationResponse(BaseModel):
+    issued_at: datetime
+    horizon_hours: int
+    baseline_cost_usd: float
+    optimized_cost_usd: float
+    expected_savings_pct: float
+    roi_confidence: float
+    pressure_guard_breaches: int
+    time_to_first_action_minutes: float
+    steps: List[PumpScheduleStepOut]
+    forecast: List[DemandForecastPoint]
