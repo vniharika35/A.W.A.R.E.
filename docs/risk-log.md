@@ -11,3 +11,4 @@
 | R-007 | Rule-based leak detector may overfit synthetic scenarios leading to false positives on real data. | Medium | High | Backtest against diverse synthetic leaks, calibrate thresholds with replay evidence, and plan ML upgrade in later phases. |
 | R-008 | Manual approval could delay isolation beyond KPI targets if Alex is unavailable. | Medium | Medium | Provide escalation alerts, enable delegated approvals, and revisit auto-execution once trust metrics exceed targets. |
 | R-009 | Forecast + tariff models may diverge from live SCADA, reducing energy-savings accuracy. | Medium | High | Validate forecasts against field data, add drift monitors, and allow operator overrides on `/energy/optimize`. |
+| R-010 | Dashboard APIs could drift from real agent state, producing stale alerts or approvals. | Medium | Medium | Hook UX endpoints to the event bus in Phase 06 and add freshness timestamps with watchdog alerts. |

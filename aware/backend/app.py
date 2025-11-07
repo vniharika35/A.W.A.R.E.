@@ -3,7 +3,6 @@
 from __future__ import annotations
 
 from collections import Counter
-from collections.abc import Iterable
 from datetime import datetime
 from datetime import timezone
 
@@ -19,15 +18,18 @@ from aware.backend.isolation import IsolationPolicy
 from aware.backend.isolation import IsolationStateMachine
 from aware.backend.isolation import IsolationStatus
 from aware.backend.isolation.network import WaterNetworkGraph
-from aware.ml.detectors import LeakDetectionResult
+from aware.backend.ux import DashboardService
 from aware.ml.detectors import LeakDetector
 from aware.ml.detectors import LeakDetectorConfig
-from aware.sim.telemetry import TelemetryEvent
 
 from .db import get_engine
 from .db import get_session
 from .models import IsolationAction
 from .models import TelemetryRecord
+from .schemas import DashboardAlert
+from .schemas import DashboardMapResponse
+from .schemas import DashboardScenario
+from .schemas import DashboardSummaryResponse
 from .schemas import DemandForecastPoint
 from .schemas import DemandForecastResponse
 from .schemas import EnergyOptimizationRequest
@@ -41,6 +43,8 @@ from .schemas import PumpScheduleStepOut
 from .schemas import TelemetryIngestRequest
 from .schemas import TelemetryIngestResponse
 from .schemas import TelemetryStats
+from .utils import leak_result_to_dict
+from .utils import records_to_events
 
 
 app = FastAPI(title="A.W.A.R.E. Telemetry Ingestion", version="0.1.0")
@@ -108,7 +112,7 @@ def analyze_leaks(
     if not records:
         return {"status": "no-data", "alerts": []}
 
-    events = _records_to_events(records)
+    events = records_to_events(records)
     config = LeakDetectorConfig(minimum_support=min(240, len(events) // 2))
     detector = LeakDetector(config)
     detector.fit_baseline(events)
@@ -117,9 +121,39 @@ def analyze_leaks(
     return {
         "status": "ok",
         "sample_size": len(events),
-        "latest": _result_to_dict(latest),
-        "alerts": [_result_to_dict(result) for result in results[-15:]],
+        "latest": leak_result_to_dict(latest),
+        "alerts": [leak_result_to_dict(result) for result in results[-15:]],
     }
+
+
+@app.get("/ux/dashboard/summary", response_model=DashboardSummaryResponse, tags=["ux"])
+def dashboard_summary(session: Session = Depends(get_session)) -> DashboardSummaryResponse:
+    service = DashboardService(session)
+    snapshot = service.summary()
+    return DashboardSummaryResponse(**snapshot)
+
+
+@app.get("/ux/dashboard/alerts", response_model=list[DashboardAlert], tags=["ux"])
+def dashboard_alerts(
+    limit: int = 5,
+    session: Session = Depends(get_session),
+) -> list[DashboardAlert]:
+    service = DashboardService(session)
+    alerts = service.alerts(limit=limit)
+    return [DashboardAlert(**item) for item in alerts]
+
+
+@app.get("/ux/dashboard/map", response_model=DashboardMapResponse, tags=["ux"])
+def dashboard_map(session: Session = Depends(get_session)) -> DashboardMapResponse:
+    service = DashboardService(session)
+    snapshot = service.map_state()
+    return DashboardMapResponse(**snapshot)
+
+
+@app.get("/ux/dashboard/scenarios", response_model=list[DashboardScenario], tags=["ux"])
+def dashboard_scenarios(session: Session = Depends(get_session)) -> list[DashboardScenario]:
+    service = DashboardService(session)
+    return [DashboardScenario(**item) for item in service.scenarios()]
 
 
 @app.get("/energy/forecast", response_model=DemandForecastResponse, tags=["energy"])
@@ -193,40 +227,6 @@ def energy_optimize(
         steps=steps,
         forecast=forecast_points,
     )
-
-
-def _records_to_events(records: Iterable[TelemetryRecord]) -> list[TelemetryEvent]:
-    ordered = sorted(records, key=lambda record: record.timestamp)
-    return [
-        TelemetryEvent(
-            timestamp=record.timestamp,
-            entity_type=record.entity_type,
-            entity_id=record.entity_id,
-            metric=record.metric,
-            value=float(record.value),
-            unit=record.unit,
-            source=record.source,
-            quality=float(record.quality or 1.0),
-        )
-        for record in ordered
-    ]
-
-
-def _result_to_dict(result: LeakDetectionResult) -> dict[str, object]:
-    return {
-        "timestamp": result.timestamp.isoformat(),
-        "entity_id": result.entity_id,
-        "probability": result.probability,
-        "triggered": result.triggered,
-        "reasons": [
-            {
-                "metric": reason.metric,
-                "score": reason.score,
-                "details": reason.details,
-            }
-            for reason in result.reasons
-        ],
-    }
 
 
 @app.post("/isolation/plan", response_model=IsolationPlanResponse, tags=["isolation"])
