@@ -84,6 +84,13 @@ Supporting assets sit at the repository root (CI/CD, configuration, documentatio
    ```
 3. Render the map overlay and scenario player using `/ux/dashboard/map` + `/ux/dashboard/scenarios` in the upcoming React shell.
 
+### Multi-Agent Orchestrator (Phase 06)
+Run a deterministic episode with the default policy:
+```bash
+python -m aware.agents | jq '.[].type'
+```
+For custom guardrails, edit `aware/infra/policies/phase-06-policy.yaml` (e.g., toggle auto-exec) and rerun the command to watch Watcher enforce safe mode when chaos hooks fire.
+
 Comprehensive quick-start instructions for the digital twin, leak detection pipeline, and UI will arrive in later phases.
 
 ## Governance & Process

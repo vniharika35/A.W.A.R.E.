@@ -1,0 +1,16 @@
+agents:
+  leak_detect:
+    trigger_threshold: 0.62
+  planner:
+    max_hops: 3
+    max_radius_m: 480
+  energy_opt:
+    min_savings_pct: 14
+  actuator:
+    require_approval: true
+    auto_execute: false
+  watcher:
+    chaos_chance: 0.1
+    safe_mode_on_failure: true
+    max_radius_m: 520
+    chaos_seed: 7
