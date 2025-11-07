@@ -9,9 +9,11 @@ services:
     volumes:
       - ./:/workspace
     working_dir: /workspace
+    env_file:
+      - .env
     environment:
       PYTHONPATH: /workspace
-      DATABASE_URL: postgresql+psycopg://aware:aware@db:5432/aware
+      DATABASE_URL: ${DATABASE_URL:-postgresql+psycopg://aware:aware@db:5432/aware}
     mem_limit: 2g
     cpus: 1.0
 
@@ -23,8 +25,12 @@ services:
     working_dir: /workspace
     volumes:
       - ./:/workspace
+    env_file:
+      - .env
     environment:
-      DATABASE_URL: postgresql+psycopg://aware:aware@db:5432/aware
+      DATABASE_URL: ${DATABASE_URL:-postgresql+psycopg://aware:aware@db:5432/aware}
+      ENERGY_MIN_SAVINGS_PCT: ${ENERGY_MIN_SAVINGS_PCT:-12}
+      PRESSURE_FLOOR_KPA: ${PRESSURE_FLOOR_KPA:-240}
     depends_on:
       - db
     ports:
@@ -58,6 +64,8 @@ services:
     working_dir: /workspace
     volumes:
       - ./:/workspace
+    env_file:
+      - .env
     ports:
       - "8000:8000"
     mem_limit: 1g
@@ -73,5 +81,25 @@ services:
       - ./:/workspace
     depends_on:
       - api
+    env_file:
+      - .env
     mem_limit: 1g
     cpus: 0.5
+
+  agents:
+    build:
+      context: .
+      target: dev
+    command: python -m aware.agents
+    working_dir: /workspace
+    volumes:
+      - ./:/workspace
+    env_file:
+      - .env
+    environment:
+      AGENT_POLICY: ${AGENT_POLICY:-aware/infra/policies/phase-06-policy.yaml}
+      WATCHER_CHAOS_CHANCE: ${WATCHER_CHAOS_CHANCE:-0.05}
+    depends_on:
+      - api
+    mem_limit: 512m
+    cpus: 0.25

@@ -1,7 +1,7 @@
 PYTHON ?= python3
 PIP ?= pip3
 
-.PHONY: install lint type-check test api-test e2e docs-build docs-serve docs-live ci docker-build pre-commit-install run-api simulate leak-detect
+.PHONY: install lint type-check test api-test e2e docs-build docs-serve docs-live ci docker-build pre-commit-install run-api simulate leak-detect demo compose-up compose-down orchestrator
 
 install:
 	$(PIP) install -r requirements-dev.txt
@@ -22,7 +22,7 @@ api-test:
 	pytest -m api || true
 
 e2e:
-	@echo "Playwright smoke placeholder — add scripted scenarios in Phase 5."
+	$(PYTHON) -m aware.agents > /dev/null
 
 run-api:
 	uvicorn aware.backend.app:app --reload --host 0.0.0.0 --port 8001
@@ -33,6 +33,21 @@ simulate:
 leak-detect:
 	TELEMETRY=$${TELEMETRY:-docs/samples/telemetry_sample.csv} && \
 	$(PYTHON) -m aware.ml $$TELEMETRY --baseline-window 90
+
+demo:
+	mkdir -p build
+	$(PYTHON) -m aware.sim --duration 600 --cadence 5 --replay $${REPLAY_OUTPUT:-build/replay.csv}
+	$(PYTHON) -m aware.agents > build/demo-events.json
+	@echo "Demo artifacts saved under build/"
+
+compose-up:
+	docker compose up api db redis -d
+
+compose-down:
+	docker compose down
+
+orchestrator:
+	$(PYTHON) -m aware.agents
 
 docs-build:
 	mkdocs build -s

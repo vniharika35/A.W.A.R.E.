@@ -13,3 +13,4 @@
 | R-009 | Forecast + tariff models may diverge from live SCADA, reducing energy-savings accuracy. | Medium | High | Validate forecasts against field data, add drift monitors, and allow operator overrides on `/energy/optimize`. |
 | R-010 | Dashboard APIs could drift from real agent state, producing stale alerts or approvals. | Medium | Medium | Hook UX endpoints to the event bus in Phase 06 and add freshness timestamps with watchdog alerts. |
 | R-011 | Event-bus chaos hooks might mask real outages if misconfigured. | Low | High | Cap chaos probability in policy reviews, log all `chaos.injected` events, and keep Watcher safe-mode manual override steps documented. |
+| R-012 | Demo automation may drift from reality if `.env` or compose targets change without docs. | Medium | Medium | Treat `.env.example` + demo script as release artifacts with PR checklist items, and run `make demo` in CI before tagging. |

@@ -25,7 +25,10 @@ nav:
       - "Phase 04 — Energy Optimization": phase-04.md
       - "Phase 05 — Real-time UX": phase-05.md
       - "Phase 06 — Multi-Agent Orchestration": phase-06.md
+      - "Phase 07 — Packaging & Demo": phase-07.md
   - Architecture:
       - "ADR-001 — Scope & Success Metrics": adr/ADR-001-scope-and-success-metrics.md
       - "User Journeys": journeys/alex-maya-jordan.md
       - "Risk Log": risk-log.md
+  - Demo:
+      - "Phase 07 Demo Script": demo-script-phase-07.md

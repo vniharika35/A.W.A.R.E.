@@ -31,10 +31,11 @@ Supporting assets sit at the repository root (CI/CD, configuration, documentatio
 
 ## Getting Started (Phase 1)
 1. Install prerequisites: Docker, Docker Compose, Python 3.11+, Node 18+, and `make`.
-2. Clone the repository and install pre-commit hooks:
+2. Clone the repository, copy `.env.example` → `.env`, and install pre-commit hooks:
    ```bash
    git clone git@github.com:vniharika35/A.W.A.R.E..git
    cd A.W.A.R.E.
+   cp .env.example .env
    pip install pre-commit
    pre-commit install
    ```
@@ -90,6 +91,8 @@ Run a deterministic episode with the default policy:
 python -m aware.agents | jq '.[].type'
 ```
 For custom guardrails, edit `aware/infra/policies/phase-06-policy.yaml` (e.g., toggle auto-exec) and rerun the command to watch Watcher enforce safe mode when chaos hooks fire.
+
+Need the full TA walkthrough? Follow `docs/demo-script-phase-07.md` or run `make demo` to generate the replay + agent timeline artifacts under `build/`.
 
 Comprehensive quick-start instructions for the digital twin, leak detection pipeline, and UI will arrive in later phases.
 
