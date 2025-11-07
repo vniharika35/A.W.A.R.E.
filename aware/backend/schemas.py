@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 from datetime import datetime
+from typing import Any
 from typing import Iterable
 from typing import List
 
@@ -125,3 +126,73 @@ class EnergyOptimizationResponse(BaseModel):
     time_to_first_action_minutes: float
     steps: List[PumpScheduleStepOut]
     forecast: List[DemandForecastPoint]
+
+
+class DashboardKpi(BaseModel):
+    name: str
+    value: float
+    unit: str
+    target: str
+    trend: str
+
+
+class DashboardEnergySummary(BaseModel):
+    issued_at: datetime
+    baseline_cost_usd: float
+    optimized_cost_usd: float
+    expected_savings_pct: float
+    pressure_guard_breaches: int
+    time_to_first_action_minutes: float
+
+
+class DashboardSummaryResponse(BaseModel):
+    status: str
+    alerts_open: int
+    kpis: List[DashboardKpi]
+    energy: DashboardEnergySummary | None = None
+
+
+class DashboardAlert(BaseModel):
+    id: str
+    type: str
+    severity: str
+    status: str
+    message: str
+    timestamp: datetime
+    metadata: Any | None = None
+
+
+class DashboardMapNode(BaseModel):
+    id: str
+    label: str
+    lat: float
+    lon: float
+    type: str
+    status: str
+    pressure_kpa: float | None = None
+
+
+class DashboardMapPipe(BaseModel):
+    id: str
+    from_: str = Field(alias="from")
+    to: str
+    customers_affected: int
+    loss_rate_lps: float
+    status: str
+
+    model_config = ConfigDict(populate_by_name=True)
+
+
+class DashboardMapResponse(BaseModel):
+    last_updated: datetime
+    nodes: List[DashboardMapNode]
+    pipes: List[DashboardMapPipe]
+
+
+class DashboardScenario(BaseModel):
+    id: str
+    title: str
+    description: str
+    steps: List[str]
+    recommended_actions: List[str]
+    last_ran: datetime

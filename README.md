@@ -73,6 +73,17 @@ Supporting assets sit at the repository root (CI/CD, configuration, documentatio
    ```
 4. Review `expected_savings_pct`, `pressure_guard_breaches`, and per-hour `steps` before Alex approves execution downstream.
 
+### Dashboard API Preview (Phase 05)
+1. Pull KPI + ROI summary:
+   ```bash
+   curl http://localhost:8001/ux/dashboard/summary | jq '.kpis'
+   ```
+2. Stream the alerts feed that powers Alex’s sidebar:
+   ```bash
+   curl "http://localhost:8001/ux/dashboard/alerts?limit=5" | jq '.[] | {type,severity,message}'
+   ```
+3. Render the map overlay and scenario player using `/ux/dashboard/map` + `/ux/dashboard/scenarios` in the upcoming React shell.
+
 Comprehensive quick-start instructions for the digital twin, leak detection pipeline, and UI will arrive in later phases.
 
 ## Governance & Process
